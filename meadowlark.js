@@ -15,6 +15,12 @@ app.set('port',process.env.PORT || 3000);
 // 设置static中间件
 app.use(express.static(__dirname + '/public'));
 
+//设置测试
+app.use(function (req,res,next) {
+    res.locals.showTests = app.get('env') !== 'production' && req.query.test === '1';
+    next();
+});
+
 //home 页面
 app.get('/',function (req,res) {
     res.render('home');
@@ -22,9 +28,20 @@ app.get('/',function (req,res) {
 
 //about 页面
 app.get('/about',function (req,res) {
-    res.render('about',{fortune:fortune.getFortune()});
+    res.render('about',{
+        fortune:fortune.getFortune(),
+        pageTestScript:'/qa/tests-about.js'
+    });
 });
 
+//旅游路线页面
+app.get('/tours/hood-river',function (req,res) {
+   res.render('tours/hood-river');
+});
+
+app.get('/tours/request-group-rate',function (req,res) {
+   res.render('tours/request-group-rate')
+});
 //404 catch-all 处理器 （中间件）
 app.use(function (req,res,next) {
     res.status(404);
